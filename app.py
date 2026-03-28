@@ -1,71 +1,123 @@
-from flask import Flask
+from flask import Flask, render_template_string
+
 app = Flask(__name__)
+
+# Light-themed HTML Template
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartikey DevOps Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --primary: #3b82f6;
+            --accent: #10b981;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin-top: -3rem;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text); }
+        h2 { color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
+        .badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .journey-log {
+            list-style: none;
+            padding: 0;
+        }
+        .log-item {
+            padding: 1rem;
+            border-left: 4px solid var(--primary);
+            background: #f1f5f9;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        footer {
+            margin-top: 2rem;
+            color: #64748b;
+            font-size: 0.875rem;
+            padding-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Kartikey's DevOps Journey</h1>
+        <p>Documenting the path to SRE & Infrastructure Excellence</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Current Project Status <span class="badge">Live</span></h2>
+            <p><strong>Environment:</strong> AWS EC2 (t3.micro)</p>
+            <p><strong>Deployment:</strong> Automated via GitHub Actions & Docker Hub</p>
+            <p><strong>Latest Update:</strong> Successfully resolved Port 5000 allocation conflicts using a full service reset.</p>
+        </div>
+
+        <div class="card">
+            <h2>Milestones Reached</h2>
+            <ul class="journey-log">
+                <li class="log-item">
+                    <strong>Containerization Mastered:</strong> Built a multi-stage Dockerfile for Flask optimization.
+                </li>
+                <li class="log-item">
+                    <strong>CI/CD Implementation:</strong> Automated the build-test-deploy cycle using GitHub Workflows.
+                </li>
+                <li class="log-item">
+                    <strong>Infrastructure Hardening:</strong> Configured AWS Security Groups and Docker networking.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Kartikey | Built with Flask & GitHub Actions
+    </footer>
+</body>
+</html>
+"""
 
 @app.route('/')
 def home():
-    return """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SAHU JI Athletics | Performance Sportswear</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-            body { font-family: 'Inter', sans-serif; }
-        </style>
-    </head>
-    <body class="bg-black text-white">
-        <nav class="p-6 flex justify-between items-center border-b border-gray-800">
-            <h1 class="text-2xl font-black tracking-tighter">SAHU JI</h1>
-            <div class="space-x-6 text-sm font-medium uppercase tracking-widest text-gray-400">
-                <a href="#" class="hover:text-white transition">Training</a>
-                <a href="#" class="hover:text-white transition">Lifestyle</a>
-                <a href="#" class="hover:text-white transition">E-Sports</a>
-            </div>
-        </nav>
-
-        <header class="relative h-[80vh] flex items-center justify-center overflow-hidden">
-            <div class="z-10 text-center px-4">
-                <h2 class="text-6xl md:text-8xl font-black italic uppercase tracking-tighter mb-4">
-                    Limitless <span class="text-blue-600">Motion</span>
-                </h2>
-                <p class="max-w-xl mx-auto text-gray-400 text-lg mb-8">
-                    Engineered for high-intensity performance. From the pitch to the server, stay ahead of the game.
-                </p>
-                <div class="flex gap-4 justify-center">
-                    <button class="bg-white text-black px-8 py-4 font-bold uppercase hover:bg-gray-200 transition">Shop Training</button>
-                    <button class="border border-white px-8 py-4 font-bold uppercase hover:bg-white hover:text-black transition">Explore Gear</button>
-                </div>
-            </div>
-            <div class="absolute inset-0 opacity-20 pointer-events-none">
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500 rounded-full blur-[120px]"></div>
-            </div>
-        </header>
-
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-1 border-t border-gray-800 bg-gray-800">
-            <div class="bg-black p-12 text-center">
-                <h3 class="text-4xl font-black mb-2">3.5Y+</h3>
-                <p class="text-gray-500 uppercase text-xs tracking-widest">Innovation Heritage</p>
-            </div>
-            <div class="bg-black p-12 text-center border-l border-r border-gray-800">
-                <h3 class="text-4xl font-black mb-2">PRO-DRY</h3>
-                <p class="text-gray-500 uppercase text-xs tracking-widest">Moisture Tech</p>
-            </div>
-            <div class="bg-black p-12 text-center">
-                <h3 class="text-4xl font-black mb-2">GLOBAL</h3>
-                <p class="text-gray-500 uppercase text-xs tracking-widest">Standard Shipping</p>
-            </div>
-        </section>
-
-        <footer class="p-10 text-center text-gray-600 text-sm">
-            &copy; 2026 SAHU JI Athletics. Deployment via GitHub Actions Complete.
-        </footer>
-    </body>
-    </html>
-    """
+    return render_template_string(HTML_TEMPLATE)
 
 if __name__ == '__main__':
-    # Keep port 5000 to match your AWS Inbound Rules
     app.run(host='0.0.0.0', port=5000)
