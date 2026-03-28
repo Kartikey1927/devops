@@ -26,16 +26,19 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Pull the image
+            # 1. Pull the fresh image
             docker pull ${{ secrets.DOCKER_USERNAME }}/hello-devops:latest
             
-            # Stop existing container
+            # 2. Kill the container and free the port
             docker stop my-app || true
             docker rm my-app || true
-            
-            # Kill anything running on port 5000
-            # This uses 'fuser' to find the PID and kill it
             sudo fuser -k 5000/tcp || true
             
-            # Start the new container
+            # 3. Wait 5 seconds for the system to release the port
+            sleep 5
+            
+            # 4. Cleanup unused networks/containers
+            docker system prune -f
+            
+            # 5. Start the new container
             docker run -d --name my-app -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/hello-devops:latest
