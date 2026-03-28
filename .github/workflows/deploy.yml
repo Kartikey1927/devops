@@ -26,15 +26,16 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Pull the new image
+            # Pull the image
             docker pull ${{ secrets.DOCKER_USERNAME }}/hello-devops:latest
             
-            # Stop and remove the Docker container if it exists
+            # Stop existing container
             docker stop my-app || true
             docker rm my-app || true
             
-            # THE NUCLEAR FIX: Kill any process (Docker or manual Python) using port 5000
+            # Kill anything running on port 5000
+            # This uses 'fuser' to find the PID and kill it
             sudo fuser -k 5000/tcp || true
             
-            # Start the new container cleanly
+            # Start the new container
             docker run -d --name my-app -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/hello-devops:latest
