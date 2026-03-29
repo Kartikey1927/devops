@@ -1,8 +1,14 @@
 from flask import Flask, render_template_string
+from prometheus_client import make_wsgi_app, Counter
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 app = Flask(__name__)
 
-# Light-themed HTML Template
+# Track how many people visit the page
+# This creates a metric called 'web_visitor_total'
+VISITOR_COUNTER = Counter('web_visitor_total', 'Total number of visitors to the DevOps Journey page')
+
+# Light-themed HTML Template (Your existing design)
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -89,7 +95,7 @@ HTML_TEMPLATE = """
             <h2>Current Project Status <span class="badge">Live</span></h2>
             <p><strong>Environment:</strong> AWS EC2 (t3.micro)</p>
             <p><strong>Deployment:</strong> Automated via GitHub Actions & Docker Hub</p>
-            <p><strong>Latest Update:</strong> Successfully resolved Port 5000 allocation conflicts using a full service reset.</p>
+            <p><strong>Observability:</strong> Prometheus Exporter Integrated</p>
         </div>
 
         <div class="card">
@@ -102,7 +108,7 @@ HTML_TEMPLATE = """
                     <strong>CI/CD Implementation:</strong> Automated the build-test-deploy cycle using GitHub Workflows.
                 </li>
                 <li class="log-item">
-                    <strong>Infrastructure Hardening:</strong> Configured AWS Security Groups and Docker networking.
+                    <strong>Observability Setup:</strong> Integrated Prometheus metrics for real-time traffic tracking.
                 </li>
             </ul>
         </div>
@@ -117,7 +123,15 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def home():
+    VISITOR_COUNTER.inc() # Increment the metric count
     return render_template_string(HTML_TEMPLATE)
 
+# This is the "Magic" step: 
+# It adds a /metrics page that Prometheus will scrape for data
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+    '/metrics': make_wsgi_app()
+})
+
 if __name__ == '__main__':
+    # Running on 5000 as usual
     app.run(host='0.0.0.0', port=5000)

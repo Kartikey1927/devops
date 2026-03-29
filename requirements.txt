@@ -1,2 +1,4 @@
-flask==3.0.0
+flask
+werkzeug
+prometheus-client
 #This tells the computer which libraries to download
