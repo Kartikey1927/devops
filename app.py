@@ -127,7 +127,7 @@ def home():
     return render_template_string(HTML_TEMPLATE)
 
 # This is the "Magic" step: 
-# It adds a /metrics page that Prometheus will scrape for data
+# It adds a /metrics page that Prometheus will scrape forr data
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
     '/metrics': make_wsgi_app()
 })
