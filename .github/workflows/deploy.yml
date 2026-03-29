@@ -19,6 +19,16 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-devops:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/hello-devops:latest
 
+      - name: Copy Config Files to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          # This moves your config files to the server's home directory
+          source: "docker-compose.yml,prometheus.yml"
+          target: "~/"
+
       - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@master
         with:
@@ -29,15 +39,15 @@ jobs:
             # 1. Pull latest image
             docker pull ${{ secrets.DOCKER_USERNAME }}/hello-devops:latest
             
-            # 2. Shut down the entire stack (App, Prometheus, Grafana)
-            # This cleans up all containers defined in your docker-compose.yml
+            # 2. Shut down the stack
+            # Since files are now at ~/, navigate there first
+            cd ~
             docker-compose down || true
             
-            # 3. THE RESET: Clear ports 5000, 9090, and 3000
+            # 3. Clear ports
             sudo fuser -k 5000/tcp 9090/tcp 3000/tcp || true
             sudo systemctl restart docker
             sleep 5
             
-            # 4. Final launch using Docker Compose
-            # -d runs it in the background
+            # 4. Final launch
             docker-compose up -d
