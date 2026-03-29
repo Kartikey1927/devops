@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    image: your-docker-username/hello-devops:latest # Change to your actual username
+    image: kartikeymisra/hello-devops:latest # Change to your actual username
     ports:
       - "5000:5000"
     restart: always
